@@ -48,7 +48,13 @@ streamlit run shona_leet_mutator2.py
 ## 🛡️ Security & DPO Perspective
 As a project led by a **Certified Data Protection Officer (DPO)**, Z3ro Nois3 explores how linguistic bias affects data privacy. When an AI doesn't understand the morphology of a language, it cannot properly audit the entropy of its users' data, leading to a "False Security" trap in the SADC region.
 
-## 🤝 Contribute
-We are looking for collaborators to expand the **Linguistic Slot-Engine** to other SADC languages including Ndebele, Zulu, Swahili, and Xhosa. We would also love contributors of datasets.
+## 🤝 Call for Contributors:
+Help us bridge the linguistic gap! We are expanding our engine to support a wider range of Bantu languages and we need your help.
+
+* Language Experts: Help us map the morphological "slots" for Ndebele, Zulu, Swahili, and more.
+
+* Data Providers: We are looking for clean, diverse datasets to improve our forensic audits.
+
+* Developers: Help us optimize the Python middleware for regional scale.
 
 *Built with ☕ for the future of African AI.*
