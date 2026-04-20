@@ -1,0 +1,44 @@
+TITLE: Shona RockYou: Decoding Cultural Entropy and the Architecture of Predictability
+
+---
+
+### Introduction: The Myth of Randomness
+
+In the world of cybersecurity, the name "RockYou" is synonymous with one of the most significant password leaks in history. It served as a wakeup call about the predictability of human choices. However, for the SADC region and speakers of Bantu languages like Shona, predictability is not just about common numbers or special characters; it is deeply rooted in **cultural and linguistic architecture**.
+
+"Shona RockYou" is a research project that ethically repurposes the concept of lexical pattern analysis to study human-generated linguistic strings—not credentials, but the meaningful patterns that define our digital identity.
+
+### The Problem: The "False Security" Trap
+
+As a Certified Data Protection Officer (DPO), I have observed a critical gap in our security infrastructure: **Western-centric entropy models**.
+
+Standard password strength meters and security audits calculate "randomness" based on character frequency and English-language templates. These tools often fail to account for the structural regularity of Shona. A Shona speaker might create a string that feels complex to a Western algorithm, yet follows a rigid cultural template, creating a "False Security" trap.
+
+### The Research: Mapping Shona Linguistic Slots
+
+Shona names, surnames, and totems are semantically rich and structurally predictable. They often follow a system of **morphological slots**. For instance, many common given names are built on repeating roots:
+
+- **-ashe** (God/Grace): *Tinashe, Munashe, Kudakwashe*
+- **-enda** (Thanks): *Tendai, Tatenda, Anesu*
+- **-wa** (Bestowed): *Tapiwa, Kupakwashe*
+
+When these patterns are combined with cultural naming conventions (such as using totems/mitupo like *Soko* or *Moyo*), the mathematical entropy of the resulting string is significantly lower than a generic "random" calculator would suggest.
+
+### Computational Forensics: The Mutation Engine
+
+To study this phenomenon, we developed the **Shona Leet Mutator** (`shona_leet_mutator.py`). This tool algorithmically generates morphological and "leet-speak" variants of Shona lexical items. By analyzing the resulting search space, we can:
+
+1. **Quantify Cultural Entropy:** Measure exactly how much "shorter" the search path is when an auditor understands Shona linguistic structure.
+2. **Predictable Mutations:** Map how users likely transform Shona vowels (a, e, i, o, u) into symbolic substitutes—a process that differs from English leet-speak due to Shona's vowel-final phonology.
+3. **Audit Readiness:** Provide regional DPOs and security researchers with the wordlists (`tweets.txt`, `combined_raw.txt`) needed to perform culturally aware security audits.
+
+### Beyond Security: Documentation and Preservation
+
+While started as a security research project, Shona RockYou has larger implications for **Computational Linguistics**. By building structured wordlists of given names, surnames, and place names, we are creating a digital corpus that preserves Shona's linguistic richness while providing the data necessary to improve NLP models for the region.
+
+The project sits at the intersection of security and sovereignty. It is about ensuring that our digital protections are as linguistically informed as the people they are designed to protect.
+
+---
+Part of the Z3r0 Nois3 Research Suite.
+Corpus Repository: [shona-rockyou](file:///home/compulink/Documents/z3r0%20Nois3/shona-rockyou)
+Forensic Tool: [shona_leet_mutator.py](file:///home/compulink/Documents/z3r0%20Nois3/z3r0-nois3/shona_leet_mutator.py)
