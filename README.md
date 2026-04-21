@@ -46,38 +46,16 @@ streamlit run shona_leet_mutator2.py
 
 ```
 z3r0 Nois3/
-├── README.md                    ← you are here (monorepo root)
-│
-├── z3r0-nois3/                  ← the forensic engine
-│   ├── README.md                ← detailed engine docs
-│   ├── requirements.txt
-│   ├── dashboard.py             ← Bantu Tax tokenization dashboard
-│   ├── shona_corpus_analysis.py ← deep linguistic analysis engine
-│   ├── shona_leet_mutator.py    ← password mutation CLI
-│   ├── shona_leet_mutator2.py   ← password mutation Streamlit UI
-│   ├── shona_pitch_engine.py    ← pitch feature engine
-│   ├── Pycon Talk Outline.md
-│   ├── Genesis_full.txt
-│   ├── dummy_english.txt
-│   └── img/
-│
-└── shona-rockyou/               ← git submodule (corpus data)
-    ├── README.md
-    ├── Wordlists/
-    │   ├── names_given.txt
-    │   ├── names_surnames.txt
-    │   ├── names_given_mutations.txt
-    │   ├── names_surnames_mutations.txt
-    │   ├── totems.txt
-    │   ├── geography.txt
-    │   ├── popculture.txt
-    │   └── tweets.txt
-    └── Analysis/
-        ├── readme.md
-        ├── rockyou_analysis.md
-        ├── NGM_readme.txt
-        └── NSM_readme.txt
+├── z3r0-nois3/     ← Forensic engine, dashes, and analysis scripts
+├── shona-rockyou/  ← The Corpus containing cleaned cultural datasets
+└── bridge/         ← Adaptive tokenization modeling and benchmarking
 ```
+
+Instead of explaining every single file, the architecture is grouped into three main concepts:
+
+* **`z3r0-nois3/`**: Computes the "Bantu Tax" and tests language representations. It houses CLI scripts and Streamlit dashboards used by researchers to analyze linguistic entropy, generate morphological mutations, and map systemic sub-word glitches.
+* **`shona-rockyou/`**: Houses the raw, cleaned datasets. This includes curated wordlists of given names, totems, and geography. Also contains generated mutations used to test security strength and search spaces.
+* **`bridge/`**: The machine learning and experimental Tokenizer bridge. This folder contains the code that actively learns Shona patterns to build an adaptive, unsupervised tokenizer designed to outperform traditional BPE methods.
 
 ## 🔗 How the Modules Work Together
 
