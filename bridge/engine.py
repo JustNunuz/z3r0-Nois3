@@ -60,14 +60,26 @@ class BantuBridgeEngine:
         if not self.is_trained or len(word) < 3:
             return word
 
-        clean = word.lower().strip('.,!?:;\"\'\u2018\u2019\u201c\u201d()[]{}')
+        import re
+        m = re.match(r'^([.,!?:;\"\'\u2018\u2019\u201c\u201d()\[\]{}]*)(.*?)([.,!?:;\"\'\u2018\u2019\u201c\u201d()\[\]{}]*)$', word)
+        if not m:
+            return word
+
+        pre_punct = m.group(1)
+        core = m.group(2)
+        post_punct = m.group(3)
+
+        if len(core) < 3:
+            return word
+
+        clean = core.lower()
 
         # Tier 1: Exact whole-word match
         if clean in self.compression_map:
-            return self.compression_map[clean]
+            return pre_punct + self.compression_map[clean] + post_punct
 
         # Tier 2: Morpheme match (prefix then suffix)
-        best_result = word
+        best_result = core
         best_savings = 0
 
         for pattern in self.sorted_patterns:
@@ -76,7 +88,7 @@ class BantuBridgeEngine:
 
             if ptype == "prefix" and clean.startswith(pattern) and len(clean) > len(pattern):
                 alias = self.compression_map[pattern]
-                candidate = alias + clean[len(pattern):]
+                candidate = alias + core[len(pattern):]
                 savings = len(pattern) - len(alias)
                 if savings > best_savings:
                     best_result = candidate
@@ -84,18 +96,19 @@ class BantuBridgeEngine:
 
             elif ptype == "suffix" and clean.endswith(pattern) and len(clean) > len(pattern):
                 alias = self.compression_map[pattern]
-                candidate = clean[: -len(pattern)] + alias
+                candidate = core[: -len(pattern)] + alias
                 savings = len(pattern) - len(alias)
                 if savings > best_savings:
                     best_result = candidate
                     best_savings = savings
 
-        return best_result
+        return pre_punct + best_result + post_punct
 
     def process_text(self, text: str) -> str:
-        """Process a full text string word-by-word."""
-        words = text.split()
-        return " ".join(self.optimize_word(w) for w in words)
+        """Process a full text string word-by-word, preserving whitespace."""
+        import re
+        parts = re.split(r'(\s+)', text)
+        return "".join(self.optimize_word(p) if p.strip() else p for p in parts)
 
     def get_meta_prompt(self) -> str:
         """Get the auto-generated meta prompt for LLM decompression."""

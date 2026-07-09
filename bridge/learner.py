@@ -176,10 +176,11 @@ class AdaptiveLearner:
             # Skip if this pattern is a substring of an already-selected pattern
             # (avoid double-compression)
             skip = False
-            for existing in self.dictionary:
-                if pattern in existing or existing in pattern:
-                    skip = True
-                    break
+            for existing_pat, existing_info in self.dictionary.items():
+                if candidate["type"] == existing_info["type"]:
+                    if pattern in existing_pat or existing_pat in pattern:
+                        skip = True
+                        break
             if skip:
                 continue
 
