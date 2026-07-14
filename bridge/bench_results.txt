@@ -1,0 +1,41 @@
+
+
+
+
+
+
+==============================================================================
+  z3ro nois3: Tokenizer Forensic Benchmark (V7)
+==============================================================================
+
+  Shona corpus  : 159,355 words
+  English corpus: 178 words
+
+  [1/7] BPE (English)...
+  [2/7] WordPiece (English)...
+  [3/7] SentencePiece (English)...
+  [4/7] BPE (Shona)...
+  [5/7] WordPiece (Shona)...
+  [6/7] SentencePiece (Shona)...
+  [7/7] Bridge + BPE (Shona)...
+
+──────────────────────────────────────────────────────────────────────────────
+  Tokenizer            Lang         Tokens  Fertility   Cost ($)  Tax vs EN
+──────────────────────────────────────────────────────────────────────────────
+  BPE (GPT-4)          English         214       1.20     0.0064      1.00x
+  WordPiece            English         195       1.10     0.0058      0.91x
+  SentencePiece        English         638       3.58     0.0191      2.98x
+  BPE (GPT-4)          Shona       406,383       2.55    12.1915      2.12x
+  WordPiece            Shona       209,966       1.32     6.2990      1.10x
+  SentencePiece        Shona       571,362       3.59    17.1409      2.98x
+  Bridge + BPE         Shona       366,571       2.30    10.9971      1.91x
+──────────────────────────────────────────────────────────────────────────────
+
+  BRIDGE IMPACT (vs raw BPE on Shona)
+──────────────────────────────────────────────────────────────────────────────
+  Tokens saved       : 39,812
+  Savings percentage : 9.80%
+  Cost saved (per run): $1.1944
+  Cost saved (per 1M tokens): $2.94
+==============================================================================
+
