@@ -21,6 +21,12 @@
 
 import re
 import sys
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
 import time
 import math
 import zlib
@@ -37,11 +43,18 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import matplotlib.patches as mpatches
+import os
 from matplotlib.gridspec import GridSpec
 import seaborn as sns
 from scipy import stats as sp_stats
 from tabulate import tabulate
-import streamlit as st
+
+try:
+    import streamlit as st
+    HAS_STREAMLIT = True
+except ImportError:
+    st = None
+    HAS_STREAMLIT = False
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -1339,52 +1352,73 @@ def run_analysis(corpus_file: str) -> dict:
 
 # ─────────────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    st.set_page_config(page_title="Shona Corpus Analyser", page_icon="🇿🇼", layout="wide")
-    st.title("🇿🇼 Shona Linguistic Corpus Analyser")
-    st.markdown("Upload a UTF-8 text file (one entry per line) to process.")
+    if len(sys.argv) > 1:
+        corpus_path = sys.argv[1]
+        if not os.path.isfile(corpus_path):
+            print(f"[ERROR] Specified file not found: {corpus_path}")
+            sys.exit(1)
+        
+        print(f"=== Running Shona Corpus Analysis on: {corpus_path} ===")
+        results = run_analysis(corpus_path)
+        
+        out_dir = os.path.dirname(corpus_path) or "."
+        struct_path = os.path.join(out_dir, "shona_structural_dashboard.png")
+        ling_path = os.path.join(out_dir, "shona_linguistic_dashboard.png")
+        
+        results["fig_struct"].savefig(struct_path, dpi=150, bbox_inches="tight")
+        results["fig_ling"].savefig(ling_path, dpi=150, bbox_inches="tight")
+        print(f"\n[viz] Structural Dashboard saved -> {struct_path}")
+        print(f"[viz] Linguistic Dashboard saved  -> {ling_path}")
+    elif HAS_STREAMLIT:
+        st.set_page_config(page_title="Shona Corpus Analyser", page_icon="🇿🇼", layout="wide")
+        st.title("🇿🇼 Shona Linguistic Corpus Analyser")
+        st.markdown("Upload a UTF-8 text file (one entry per line) to process.")
 
-    uploaded_file = st.file_uploader("Upload Corpus File", type=["txt"])
-    if uploaded_file is not None:
-        temp_path = f"temp_{uploaded_file.name}"
-        with open(temp_path, "wb") as f:
-            f.write(uploaded_file.getbuffer())
+        uploaded_file = st.file_uploader("Upload Corpus File", type=["txt"])
+        if uploaded_file is not None:
+            temp_path = f"temp_{uploaded_file.name}"
+            with open(temp_path, "wb") as f:
+                f.write(uploaded_file.getbuffer())
+                
+            status = st.empty()
+            bar = st.progress(0)
+            delays = [0.2, 0.3, 0.4, 0.5, 0.3, 0.4, 0.7, 0.7, 0.5, 0.5]
+            msgs = [
+                "Initializing linguistic engine...", 
+                "Loading corpus into memory...", 
+                "Analyzing letter frequencies...", 
+                "Extracting morphological slots...", 
+                "Computing Transition Matrices...", 
+                "Checking vowel harmony...", 
+                "Applying compression...", 
+                "Rendering output matrices...",
+                "Making coffee...",
+                "Sipping coffee..."
+            ]
             
-        status = st.empty()
-        bar = st.progress(0)
-        delays = [0.2, 0.3, 0.4, 0.5, 0.3, 0.4, 0.7, 0.7, 0.5, 0.5]
-        msgs = [
-            "Initializing linguistic engine...", 
-            "Loading corpus into memory...", 
-            "Analyzing letter frequencies...", 
-            "Extracting morphological slots...", 
-            "Computing Transition Matrices...", 
-            "Checking vowel harmony...", 
-            "Applying compression...", 
-            "Rendering output matrices...",
-            "Making coffee...",
-            "Sipping coffee..."
-        ]
-        
-        progress = 0
-        for i in range(10):
-            status.markdown(f"###  LOADING: {msgs[i]}")
-            time.sleep(delays[i])
-            progress += 10
-            bar.progress(progress)
+            progress = 0
+            for i in range(10):
+                status.markdown(f"###  LOADING: {msgs[i]}")
+                time.sleep(delays[i])
+                progress += 10
+                bar.progress(progress)
+                
+            results = run_analysis(temp_path)
+            bar.progress(100)
+            status.markdown("###  ANALYSIS COMPLETE ")
+            st.success("Dashboards rendered successfully!")
             
-        results = run_analysis(temp_path)
-        bar.progress(100)
-        status.markdown("###  ANALYSIS COMPLETE ")
-        st.success("Dashboards rendered successfully!")
-        
-        st.markdown("---")
-        st.markdown("<h1 style='text-align: center; font-size: 5em;'>Structural Dashboard</h1>", unsafe_allow_html=True)
-        st.pyplot(results["fig_struct"])
-        
-        st.markdown("<h1 style='text-align: center; font-size: 5em;'>Linguistic Dashboard</h1>", unsafe_allow_html=True)
-        st.pyplot(results["fig_ling"])
-        
-        st.markdown("---")
-        st.markdown("<h1 style='text-align: center; font-size: 6em;'>📊 Security & Efficiency Audit</h1>", unsafe_allow_html=True)
-        st.markdown("<div style='font-size: 2em; padding: 20px; background-color: #2b1114; border-left: 10px solid #f78166; margin-bottom: 20px; color: #fff;'><strong>🚨 The False Security Gap:</strong> Our engine proves that while users perceive leet-speak as complex, the underlying linguistic 'Slot' structure reduces the search space by 92% compared to random strings.</div>", unsafe_allow_html=True)
-        st.markdown("<div style='font-size: 2em; padding: 20px; background-color: #0b1a13; border-left: 10px solid #3fb950; color: #fff;'><strong>💡 The Bantu Efficiency Insight:</strong> By breaking words into their natural 3-part morphological slots ([Prefix]+[Root]+[Suffix]), we reduce the computational 'Bantu Tax' and lower AI processing costs by 30%.</div>", unsafe_allow_html=True)
+            st.markdown("---")
+            st.markdown("<h1 style='text-align: center; font-size: 5em;'>Structural Dashboard</h1>", unsafe_allow_html=True)
+            st.pyplot(results["fig_struct"])
+            
+            st.markdown("<h1 style='text-align: center; font-size: 5em;'>Linguistic Dashboard</h1>", unsafe_allow_html=True)
+            st.pyplot(results["fig_ling"])
+            
+            st.markdown("---")
+            st.markdown("<h1 style='text-align: center; font-size: 6em;'>📊 Security & Efficiency Audit</h1>", unsafe_allow_html=True)
+            st.markdown("<div style='font-size: 2em; padding: 20px; background-color: #2b1114; border-left: 10px solid #f78166; margin-bottom: 20px; color: #fff;'><strong>🚨 The False Security Gap:</strong> Our engine proves that while users perceive leet-speak as complex, the underlying linguistic 'Slot' structure reduces the search space by 92% compared to random strings.</div>", unsafe_allow_html=True)
+            st.markdown("<div style='font-size: 2em; padding: 20px; background-color: #0b1a13; border-left: 10px solid #3fb950; color: #fff;'><strong>💡 The Bantu Efficiency Insight:</strong> By breaking words into their natural 3-part morphological slots ([Prefix]+[Root]+[Suffix]), we reduce the computational 'Bantu Tax' and lower AI processing costs by 30%.</div>", unsafe_allow_html=True)
+    else:
+        print("Usage: python shona_corpus_analysis.py <corpus_file.txt>")
+        print("Or install streamlit (`pip install streamlit`) to run the interactive dashboard: streamlit run shona_corpus_analysis.py")

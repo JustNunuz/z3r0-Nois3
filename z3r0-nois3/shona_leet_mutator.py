@@ -2,10 +2,18 @@ import concurrent.futures
 import itertools
 import math
 import os
+import sys
+
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-INPUT_FILE = os.path.join(SCRIPT_DIR, "names_surnames.txt")
-OUTPUT_FILE = os.path.join(SCRIPT_DIR, "names_surnames_mutations.txt")
+DEFAULT_INPUT = os.path.join(SCRIPT_DIR, "..", "shona-rockyou", "Wordlists", "cleaned", "names_surnames.txt")
+DEFAULT_OUTPUT = os.path.join(SCRIPT_DIR, "names_surnames_mutations.txt")
 
 LEET_MAP = {
     'a': ['a', '4', '@'],
@@ -91,12 +99,23 @@ def read_lines(filepath):
                 yield line_stripped
 
 def main():
-    if not os.path.exists(INPUT_FILE):
-        print(f"Error: {INPUT_FILE} not found. Ensure the dummy file is present.")
-        return
+    input_file = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_INPUT
+    output_file = sys.argv[2] if len(sys.argv) > 2 else DEFAULT_OUTPUT
+
+    if not os.path.exists(input_file):
+        # Fallback to local file in script dir
+        local_fallback = os.path.join(SCRIPT_DIR, os.path.basename(input_file))
+        if os.path.exists(local_fallback):
+            input_file = local_fallback
+        else:
+            print(f"Error: {input_file} not found.")
+            print(f"Usage: python shona_leet_mutator.py <input_wordlist.txt> [output_file.txt]")
+            return
         
     print("==========================================================")
     print(" Starting Linguistic Mutation & Forensic Engine")
+    print(f" Input:  {input_file}")
+    print(f" Output: {output_file}")
     print("==========================================================")
     
     chunk_size = 1000
@@ -104,10 +123,10 @@ def main():
     processed_count = 0
     
     # Process dynamically, multiprocessing chunk by chunk.
-    with open(OUTPUT_FILE, "w") as out:
+    with open(output_file, "w", encoding="utf-8") as out:
         with concurrent.futures.ProcessPoolExecutor() as executor:
             # Map returns generator that keeps original ordering
-            results = executor.map(process_name, read_lines(INPUT_FILE), chunksize=100)
+            results = executor.map(process_name, read_lines(input_file), chunksize=100)
             
             variants_buffer = []
             
@@ -136,7 +155,7 @@ def main():
     print("-" * 60)
     print(f"Total initial seeds  : {processed_count}")
     print(f"Total mutated output : {all_variants_count}")
-    print(f"Output saved to      : {OUTPUT_FILE}")
+    print(f"Output saved to      : {output_file}")
 
 if __name__ == '__main__':
     main()
